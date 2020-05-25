@@ -58,9 +58,9 @@ int sphere_fit_least_squares(const float x[], const float y[], const float z[],
 			     unsigned int size, unsigned int max_iterations, float delta, float *sphere_x, float *sphere_y, float *sphere_z,
 			     float *sphere_radius);
 int ellipsoid_fit_least_squares(const float x[], const float y[], const float z[],
-				unsigned int size, int max_iterations, float delta, float *offset_x, float *offset_y, float *offset_z,
+				unsigned int size, int max_iterations, float *offset_x, float *offset_y, float *offset_z,
 				float *sphere_radius, float *diag_x, float *diag_y, float *diag_z, float *offdiag_x, float *offdiag_y,
-				float *offdiag_z);
+				float *offdiag_z, bool sphere_fit_only);
 int run_lm_sphere_fit(const float x[], const float y[], const float z[], float &_fitness, float &_sphere_lambda,
 		      unsigned int size, float *offset_x, float *offset_y, float *offset_z,
 		      float *sphere_radius, float *diag_x, float *diag_y, float *diag_z, float *offdiag_x, float *offdiag_y,
@@ -139,7 +139,7 @@ bool calibrate_cancel_check(orb_advert_t *mavlink_log_pub,	///< uORB handle to w
 
 #define calibration_log_info(_pub, _text, ...)			\
 	do { \
-		mavlink_and_console_log_info(_pub, _text, ##__VA_ARGS__); \
+		mavlink_log_info(_pub, _text, ##__VA_ARGS__); \
 		px4_usleep(10000); \
 	} while(0);
 
