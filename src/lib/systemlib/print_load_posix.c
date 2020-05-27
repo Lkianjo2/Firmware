@@ -57,6 +57,8 @@
 #ifdef __PX4_QURT
 // dprintf is not available on QURT. Use the usual output to mini-dm.
 #define dprintf(_fd, _text, ...) ((_fd) == 1 ? PX4_INFO((_text), ##__VA_ARGS__) : (void)(_fd))
+#elif defined(__QNX__)
+#define dprintf(_fd, _text, ...) 
 #endif
 
 extern struct system_load_s system_load;
@@ -83,6 +85,9 @@ void init_print_load_s(uint64_t t, struct print_load_s *s)
 
 void print_load(uint64_t t, int fd, struct print_load_s *print_state)
 {
+#if defined(__QNX__)
+
+#else
 	char *clear_line = "";
 
 	/* print system information */
@@ -172,6 +177,7 @@ void print_load(uint64_t t, int fd, struct print_load_s *print_state)
 		return;
 	}
 
+#endif
 #endif
 }
 

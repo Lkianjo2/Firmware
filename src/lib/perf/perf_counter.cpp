@@ -48,9 +48,11 @@
 
 #include "perf_counter.h"
 
-#ifdef __PX4_QURT
+#if defined(__PX4_QURT) 
 // There is presumably no dprintf on QURT. Therefore use the usual output to mini-dm.
 #define dprintf(_fd, _text, ...) ((_fd) == 1 ? PX4_INFO((_text), ##__VA_ARGS__) : (void)(_fd))
+#elif defined(__QNX__)
+#define dprintf(_fd, _text, ...) 
 #endif
 
 /**
@@ -466,8 +468,10 @@ perf_print_counter_fd(int fd, perf_counter_t handle)
 		break;
 
 	case PC_ELAPSED: {
+#if !defined(__QNX__)
 			struct perf_ctr_elapsed *pce = (struct perf_ctr_elapsed *)handle;
 			float rms = sqrtf(pce->M2 / (pce->event_count - 1));
+#endif
 			dprintf(fd, "%s: %llu events, %lluus elapsed, %.2fus avg, min %lluus max %lluus %5.3fus rms\n",
 				handle->name,
 				(unsigned long long)pce->event_count,
@@ -480,9 +484,10 @@ perf_print_counter_fd(int fd, perf_counter_t handle)
 		}
 
 	case PC_INTERVAL: {
+#if !defined(__QNX__)
 			struct perf_ctr_interval *pci = (struct perf_ctr_interval *)handle;
 			float rms = sqrtf(pci->M2 / (pci->event_count - 1));
-
+#endif
 			dprintf(fd, "%s: %llu events, %.2fus avg, min %lluus max %lluus %5.3fus rms\n",
 				handle->name,
 				(unsigned long long)pci->event_count,

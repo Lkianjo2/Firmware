@@ -252,8 +252,13 @@ dsm_config(int fd)
 
 		/* 115200bps, no parity, one stop bit */
 		tcgetattr(fd, &t);
-		cfsetspeed(&t, 115200);
-		t.c_cflag &= ~(CSTOPB | PARENB);
+#if defined(__QNX__)
+	        cfsetispeed(&t, 115200);
+                cfsetospeed(&t, 115200);	
+#else
+                cfsetspeed(&t, 115200);
+#endif		
+                t.c_cflag &= ~(CSTOPB | PARENB);
 		tcsetattr(fd, TCSANOW, &t);
 
 		/* initialise the decoder */

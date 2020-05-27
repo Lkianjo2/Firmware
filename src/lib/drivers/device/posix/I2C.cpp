@@ -42,7 +42,7 @@
 
 #include "I2C.hpp"
 
-#ifdef __PX4_LINUX
+#if defined(__PX4_LINUX) && !defined(__QNX__)
 
 #include <linux/i2c.h>
 #include <linux/i2c-dev.h>

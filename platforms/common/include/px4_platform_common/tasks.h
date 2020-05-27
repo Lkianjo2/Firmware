@@ -83,7 +83,7 @@ typedef int px4_task_t;
 #error "No target OS defined"
 #endif
 
-#if defined (__PX4_LINUX)
+#if defined (__PX4_LINUX) && !defined(__QNX__)
 #include <sys/prctl.h>
 #else
 #define PR_SET_NAME	1

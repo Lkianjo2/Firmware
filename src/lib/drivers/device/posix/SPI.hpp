@@ -43,7 +43,7 @@
 #include "../CDev.hpp"
 #include <px4_platform_common/spi.h>
 
-#ifdef __PX4_LINUX
+#if defined(__PX4_LINUX) && !defined(__QNX__)
 
 #include <fcntl.h>
 #include <unistd.h>

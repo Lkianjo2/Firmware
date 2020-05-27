@@ -55,7 +55,7 @@ using namespace time_literals;
 
 #define SBUS_DEBUG_LEVEL 	0 /* Set debug output level */
 
-#if defined(__PX4_LINUX)
+#if defined(__PX4_LINUX) && !defined(__QNX__)
 #include <sys/ioctl.h>
 #include <asm-generic/termbits.h>
 #else
@@ -155,7 +155,7 @@ sbus_config(int sbus_fd, bool singlewire)
 {
 	int ret = -1;
 
-#if defined(__PX4_LINUX)
+#if defined(__PX4_LINUX) && !defined(__QNX__)
 
 	struct termios2 tio = {};
 
@@ -193,7 +193,12 @@ sbus_config(int sbus_fd, bool singlewire)
 
 		/* 100000bps, even parity, two stop bits */
 		tcgetattr(sbus_fd, &t);
+#if defined(__QNX__)
+                cfsetispeed(&t, 100000);
+                cfsetospeed(&t, 100000);
+#else
 		cfsetspeed(&t, 100000);
+#endif
 		t.c_cflag |= (CSTOPB | PARENB);
 		tcsetattr(sbus_fd, TCSANOW, &t);
 
