@@ -406,8 +406,8 @@ MavlinkFTP::_workList(PayloadHeader *payload)
 		}
 
 		uint32_t fileSize = 0;
-		char direntType;
-
+		char direntType = 0;
+#if !defined(__QNX__) //fix me!
 		// Determine the directory entry type
 		switch (result->d_type) {
 #ifdef __PX4_NUTTX
@@ -453,7 +453,7 @@ MavlinkFTP::_workList(PayloadHeader *payload)
 			// We only send back file and diretory entries, skip everything else
 			direntType = kDirentSkip;
 		}
-
+#endif //fixme!
 		if (direntType == kDirentSkip) {
 			// Skip send only dirent identifier
 			_work_buffer2[0] = '\0';

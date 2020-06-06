@@ -60,6 +60,8 @@
 #ifdef __PX4_DARWIN
 #include <sys/param.h>
 #include <sys/mount.h>
+#elif defined(__QNX__)
+#include <sys/statvfs.h>
 #else
 #include <sys/statfs.h>
 #endif
@@ -377,12 +379,18 @@ MavlinkReceiver::send_storage_information(int storage_id)
 
 	if (storage_id == 0 || storage_id == 1) { // request is for all or the first storage
 		storage_info.storage_id = 1;
-
+#if defined(__QNX__)
+                struct statvfs statfs_buf;
+#else
 		struct statfs statfs_buf;
-		uint64_t total_bytes = 0;
+#endif	
+	        uint64_t total_bytes = 0;
 		uint64_t avail_bytes = 0;
-
-		if (statfs(microsd_dir, &statfs_buf) == 0) {
+#if defined(__QNX__)
+		if (statvfs(microsd_dir, &statfs_buf) == 0) {
+#else
+                if (statfs(microsd_dir, &statfs_buf) == 0) {
+#endif	
 			total_bytes = (uint64_t)statfs_buf.f_blocks * statfs_buf.f_bsize;
 			avail_bytes = (uint64_t)statfs_buf.f_bavail * statfs_buf.f_bsize;
 		}

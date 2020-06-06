@@ -53,20 +53,24 @@ else()
 		apps.cpp
 		)
 
-	target_link_libraries(px4
-		PRIVATE
-			${module_libraries}
-			pthread m
+   
+    	target_link_libraries(px4
+	PRIVATE
+		${module_libraries}
+                m
+		#pthread m
 
-			# horrible circular dependencies that need to be teased apart
-			px4_layer px4_platform
-			work_queue
-			parameters
-	)
+		# horrible circular dependencies that need to be teased apart
+		px4_layer px4_platform
+		work_queue
+		parameters
+    	)
 
-	if(NOT APPLE)
+	if ("${PX4_BOARD}" MATCHES "nxp_imx6")
+            if(NOT APPLE)
 		target_link_libraries(px4 PRIVATE rt)
-	endif()
+	    endif()
+        endif()
 
 	target_link_libraries(px4 PRIVATE modules__uORB)
 

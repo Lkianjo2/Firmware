@@ -181,7 +181,7 @@ bool MixerTest::loadAllTest()
 			// We are just at the last directory entry
 			break;
 		}
-
+#if !defined(__QNX__) //fixme!
 		// Determine the directory entry type
 		switch (result->d_type) {
 #ifdef __PX4_NUTTX
@@ -214,6 +214,7 @@ bool MixerTest::loadAllTest()
 		default:
 			break;
 		}
+#endif
 	}
 
 	closedir(dp);

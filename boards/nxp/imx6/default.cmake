@@ -1,5 +1,6 @@
 add_definitions(
 	-D__PX4_LINUX
+        -DQNX=1
 )
 
 px4_add_board(
@@ -9,10 +10,26 @@ px4_add_board(
 	PLATFORM posix
 	ARCHITECTURE cortex-a8
 	TOOLCHAIN arm-unknown-nto-qnx7.0.0eabi
-	TESTING
-	DRIVERS		
+        CONSTRAINED_FLASH
+        DRIVERS
 	MODULES
-	SYSTEMCMDS
-	EXAMPLES
-		hello
+		commander
+		ekf2
+		land_detector
+		mc_att_control
+		mc_pos_control
+		navigator
+        SYSTEMCMDS
+                bl_update
+                hardfault_log
+                mixer
+                mtd
+                param
+                pwm
+                reboot
+                top
+                tune_control
+                ver
+        EXAMPLES
+                #hello
 	)

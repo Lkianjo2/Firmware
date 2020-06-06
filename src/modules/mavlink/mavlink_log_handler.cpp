@@ -465,6 +465,7 @@ MavlinkLogHandler::_init_list_helper()
 	struct dirent *result = nullptr;
 
 	while ((result = readdir(dp))) {
+#if !defined(__QNX__) //fix me!
 		if (result->d_type == PX4LOG_DIRECTORY) {
 			time_t tt = 0;
 			char log_path[128];
@@ -477,6 +478,7 @@ MavlinkLogHandler::_init_list_helper()
 				}
 			}
 		}
+#endif
 	}
 
 	closedir(dp);
@@ -526,6 +528,7 @@ MavlinkLogHandler::_scan_logs(FILE *f, const char *dir, time_t &date)
 		struct dirent *result = nullptr;
 
 		while ((result = readdir(dp))) {
+#if !defined(__QNX__) //fix me!
 			if (result->d_type == PX4LOG_REGULAR_FILE) {
 				time_t  ldate = date;
 				uint32_t size = 0;
@@ -541,6 +544,7 @@ MavlinkLogHandler::_scan_logs(FILE *f, const char *dir, time_t &date)
 					}
 				}
 			}
+#endif
 		}
 
 		closedir(dp);
@@ -597,7 +601,7 @@ MavlinkLogHandler::_delete_all(const char *dir)
 		if (result == nullptr) {
 			break;
 		}
-
+#if !defined(__QNX__) //fix me!
 		if (result->d_type == PX4LOG_DIRECTORY && result->d_name[0] != '.') {
 			char log_path[128];
 			int ret = snprintf(log_path, sizeof(log_path), "%s/%s", dir, result->d_name);
@@ -623,6 +627,7 @@ MavlinkLogHandler::_delete_all(const char *dir)
 				}
 			}
 		}
+#endif
 	}
 
 	closedir(dp);

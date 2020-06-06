@@ -5,4 +5,6 @@ px4_add_module(
 		dyn.cpp
 	)
 
-target_link_libraries(systemcmds__dyn PUBLIC dl)
+
+#target_link_libraries(systemcmds__dyn PUBLIC dl)
+

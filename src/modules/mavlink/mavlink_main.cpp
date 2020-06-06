@@ -541,9 +541,9 @@ Mavlink::mavlink_open_uart(const int baud, const char *uart_name, const bool for
 	case 57600:  speed = B57600;  break;
 
 	case 115200: speed = B115200; break;
-
+#if !defined(__QNX__)
 	case 230400: speed = B230400; break;
-
+#endif
 	case 460800: speed = B460800; break;
 
 	case 500000: speed = B500000; break;
@@ -686,7 +686,7 @@ Mavlink::enable_flow_control(enum FLOW_CONTROL_MODE mode)
 	struct termios uart_config;
 
 	int ret = tcgetattr(_uart_fd, &uart_config);
-
+#ifndef __QNX__
 	if (mode) {
 		uart_config.c_cflag |= CRTSCTS;
 
@@ -694,7 +694,7 @@ Mavlink::enable_flow_control(enum FLOW_CONTROL_MODE mode)
 		uart_config.c_cflag &= ~CRTSCTS;
 
 	}
-
+#endif
 	ret = tcsetattr(_uart_fd, TCSANOW, &uart_config);
 
 	if (!ret) {

@@ -64,7 +64,7 @@
 #include "devices/src/mtk.h"
 #include "devices/src/ubx.h"
 
-#ifdef __PX4_LINUX
+#if defined(__PX4_LINUX) && !defined(__QNX__) 
 #include <linux/spi/spidev.h>
 #endif /* __PX4_LINUX */
 
@@ -469,9 +469,9 @@ int GPS::setBaudrate(unsigned baud)
 	case 57600:  speed = B57600;  break;
 
 	case 115200: speed = B115200; break;
-
+#ifndef __QNX__
 	case 230400: speed = B230400; break;
-
+#endif
 	default:
 		PX4_ERR("ERR: unknown baudrate: %d", baud);
 		return -EINVAL;
@@ -517,8 +517,11 @@ int GPS::setBaudrate(unsigned baud)
 	uart_config.c_lflag &= ~(ECHO | ECHONL | ICANON | IEXTEN | ISIG);
 
 	/* no parity, one stop bit, disable flow control */
-	uart_config.c_cflag &= ~(CSTOPB | PARENB | CRTSCTS);
-
+#ifdef __QNX__
+	uart_config.c_cflag &= ~(CSTOPB | PARENB);
+#else
+        uart_config.c_cflag &= ~(CSTOPB | PARENB | CRTSCTS);
+#endif
 	/* set baud rate */
 	if ((termios_state = cfsetispeed(&uart_config, speed)) < 0) {
 		GPS_ERR("ERR: %d (cfsetispeed)", termios_state);
@@ -613,7 +616,7 @@ GPS::run()
 			return;
 		}
 
-#ifdef __PX4_LINUX
+#if defined(__PX4_LINUX) && !defined(__QNX__)
 
 		if (_interface == GPSHelper::Interface::SPI) {
 			int spi_speed = 1000000; // make sure the bus speed is not too high (required on RPi)

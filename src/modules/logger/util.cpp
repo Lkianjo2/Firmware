@@ -50,13 +50,19 @@
 #if defined(__PX4_DARWIN)
 #include <sys/param.h>
 #include <sys/mount.h>
+#elif defined(__QNX__)
+#include <sys/statvfs.h>
 #else
 #include <sys/statfs.h>
 #endif
 
 #define GPS_EPOCH_SECS ((time_t)1234567890ULL)
 
+#if defined(__QNX__)
+typedef decltype(statvfs::f_bavail) px4_statfs_buf_f_bavail_t;
+#else
 typedef decltype(statfs::f_bavail) px4_statfs_buf_f_bavail_t;
+#endif
 
 namespace px4
 {
@@ -114,18 +120,26 @@ bool get_log_time(struct tm *tt, int utc_offset_sec, bool boot_time)
 int check_free_space(const char *log_root_dir, int32_t max_log_dirs_to_keep, orb_advert_t &mavlink_log_pub,
 		     int &sess_dir_index)
 {
-	struct statfs statfs_buf;
-
+#if defined(__QNX__)
+	struct statvfs statfs_buf;
+#else
+        struct statfs statfs_buf;
+#endif
 	if (max_log_dirs_to_keep == 0) {
 		max_log_dirs_to_keep = INT32_MAX;
 	}
 
 	// remove old logs if the free space falls below a threshold
 	do {
-		if (statfs(log_root_dir, &statfs_buf) != 0) {
+#if defined(__QNX__)
+		if (statvfs(log_root_dir, &statfs_buf) != 0) {
 			return PX4_ERROR;
 		}
-
+#else
+                if (statfs(log_root_dir, &statfs_buf) != 0) {
+			return PX4_ERROR;
+		}
+#endif
 		DIR *dp = opendir(log_root_dir);
 
 		if (dp == nullptr) {
